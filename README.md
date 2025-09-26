@@ -1,66 +1,53 @@
-## Foundry
+Here’s a short, drop-in `README.md`:
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+---
 
-Foundry consists of:
+# aayushmayush07-erc20contract
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+From-scratch ERC-20 built with **Foundry**. `ERC20.sol` uses ERC-6093 custom errors; `AkToken.sol` is the concrete token that mints initial supply to the deployer.
 
-## Documentation
+## Structure
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+```
+src/            # ERC20 core, AkToken, Context, interfaces
+script/         # Deploy scripts
+test/           # Unit & fuzz tests + harness
+.github/        # CI (build, fmt, test)
 ```
 
-### Test
+## Quickstart
 
-```shell
-$ forge test
+```bash
+foundryup
+forge build
+forge test -vv
+forge fmt
+anvil
 ```
 
-### Format
+## Deploy (example)
 
-```shell
-$ forge fmt
+```bash
+forge script script/DeployAkToken.s.sol:DeployAkToken \
+  --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast
 ```
 
-### Gas Snapshots
+## Interact (Cast)
 
-```shell
-$ forge snapshot
+```bash
+# reads
+cast call $TOKEN "name()(string)"
+cast call $TOKEN "balanceOf(address)(uint256)" 0xYourAddr
+
+# writes
+cast send $TOKEN "approve(address,uint256)" 0xSpender 100e18 --private-key $PK
+cast send $TOKEN "transfer(address,uint256)" 0xTo 1e18 --private-key $PK
 ```
 
-### Anvil
+## Notes
 
-```shell
-$ anvil
-```
+* Unified `_update` handles transfer/mint/burn.
+* Infinite allowance optimization (no decrement at `type(uint256).max`).
+* Tests cover events, guards, allowance math, and supply conservation.
 
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+**License:** MIT
