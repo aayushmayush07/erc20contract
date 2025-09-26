@@ -1,5 +1,3 @@
-Here’s a short, drop-in `README.md`:
-
 ---
 
 # aayushmayush07-erc20contract
